@@ -1,4 +1,4 @@
-package com.test.ramon.jbpm.config;
+package com.dev.ramon.jbpm.config;
 
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;

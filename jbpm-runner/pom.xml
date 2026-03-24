@@ -39,7 +39,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>com.test.ramon.runner.Runner</mainClass>
+                    <mainClass>com.dev.ramon.runner.Runner</mainClass>
                 </configuration>
             </plugin>
         </plugins>

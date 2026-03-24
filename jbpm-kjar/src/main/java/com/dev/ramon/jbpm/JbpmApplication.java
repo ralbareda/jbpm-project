@@ -1,4 +1,4 @@
-package com.test.ramon.jbpm;
+package com.dev.ramon.jbpm;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
