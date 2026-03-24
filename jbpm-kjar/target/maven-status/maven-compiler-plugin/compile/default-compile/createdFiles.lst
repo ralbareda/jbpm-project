@@ -1,0 +1,3 @@
+com/test/ramon/jbpm/JbpmApplication.class
+com/test/ramon/jbpm/controller/ProcessController.class
+com/test/ramon/jbpm/config/KieConfig.class
