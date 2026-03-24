@@ -11,7 +11,7 @@
         <version>2.7.18</version>
     </parent>
 
-    <groupId>test.ramon</groupId>
+    <groupId>com.test.ramon</groupId>
     <artifactId>jbpm-springboot-demo</artifactId>
     <version>1.0.0</version>
 
