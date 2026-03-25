@@ -5,11 +5,15 @@ import org.kie.api.KieServices;
 import org.kie.api.builder.ReleaseId;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class KieConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(KieConfig.class);
 
     @Bean
     public KieContainer kieContainer() {
@@ -28,12 +32,11 @@ public class KieConfig {
         KieServices ks = KieServices.Factory.get();
         KieContainer kc = ks.getKieClasspathContainer();
 
-        System.out.println("=== DEBUG KIE ===");
-        System.out.println("KieBases: " + kc.getKieBaseNames());
+        log.info("=== DEBUG KIE ===");
+        log.info("KieBases: {}", kc.getKieBaseNames());
 
         kc.getKieBaseNames().forEach(base ->
-                System.out.println("Base: " + base +
-                        " | Sessions: " + kc.getKieSessionNamesInKieBase(base))
+                log.info("Base: {} | Sessions: {}", base, kc.getKieSessionNamesInKieBase(base))
         );
     }
 }

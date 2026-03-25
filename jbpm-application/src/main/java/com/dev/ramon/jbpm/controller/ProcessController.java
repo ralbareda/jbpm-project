@@ -1,6 +1,8 @@
 package com.dev.ramon.jbpm.controller;
 
 import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kie.api.runtime.KieSession;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/process")
 public class ProcessController {
 
+    private static final Logger log = LogManager.getLogger(ProcessController.class);
     private final KieSession kieSession;
 
     public ProcessController(KieSession kieSession) {
@@ -20,7 +23,7 @@ public class ProcessController {
     @PostMapping("/start")
     public String startProcess(@RequestBody Map<String, Object> params) {
 
-        System.out.println(">>> Received request: " + params);
+        log.info(">>> Received request: {}", params);
 
         kieSession.startProcess("demo.process", params);
 
