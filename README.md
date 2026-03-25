@@ -97,6 +97,6 @@ Sessions: [ksession]
 
 🚀 Starting the Process via REST
 Use cURL:
-Shellcurl -X POST http://localhost:8080/process/start``Show more lines
+curl -X POST http://localhost:8080/process/start
 Response:
 Process demo.process started!
