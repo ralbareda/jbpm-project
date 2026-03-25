@@ -1,4 +1,74 @@
-/target/maven-archiver/pom.properties
-/target/jbpm-springboot-demo-1.0.0.jar
-/target/jbpm-springboot-demo-1.0.0.jar.original
-/target/classes/
+################################################################################
+# GLOBAL SETTINGS FOR JAVA / MAVEN / SPRING BOOT / INTELLIJ PROJECTS
+################################################################################
+
+# Maven build output
+target/
+**/target/
+
+# Maven wrapper
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+
+# Spring Boot Fat JARs
+*.jar
+*.war
+*.original
+*.tmp
+
+################################################################################
+# IntelliJ IDEA / JetBrains
+################################################################################
+
+# Project settings
+.idea/
+.idea/**
+
+# IntelliJ module / workspace files
+*.iml
+*.iws
+*.ipr
+
+# IntelliJ caches
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/dictionaries
+.idea/**/shelf/
+.idea/**/httpRequests
+
+# JetBrains plugins artifacts
+.idea/**/aws.xml
+.idea/**/dbnavigator.xml
+.idea/**/sonarlint/
+
+################################################################################
+# OS / SYSTEM FILES
+################################################################################
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+################################################################################
+# Java / JVM
+################################################################################
+
+# compiled classes
+*.class
+
+# logs
+*.log
+
+################################################################################
+# Eclipse (in case you import it)
+################################################################################
+
+.project
+.classpath
+.settings/
+bin/

@@ -3,74 +3,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-
-    <!-- IMPORTANT: This fixes “Cannot resolve symbol springframework” -->
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
-    </parent>
-
     <groupId>com.dev.ramon</groupId>
-    <artifactId>jbpm-springboot-demo</artifactId>
+    <artifactId>jbpm-project</artifactId>
     <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>jbpm-kjar</module>
+        <module>jbpm-application</module>
+    </modules>
 
     <properties>
-        <java.version>11</java.version>
-        <jbpm.version>7.74.0.Final</jbpm.version>
+        <jbpm.version>7.74.1.Final</jbpm.version>
     </properties>
-
-    <dependencies>
-
-        <!-- SPRING WEB -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- JBPM minimal dependencies -->
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-flow</artifactId>
-            <version>${jbpm.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-flow-builder</artifactId>
-            <version>${jbpm.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.kie</groupId>
-            <artifactId>kie-api</artifactId>
-            <version>${jbpm.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.kie</groupId>
-            <artifactId>kie-ci</artifactId>
-            <version>${jbpm.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-core</artifactId>
-            <version>${jbpm.version}</version>
-        </dependency>
-
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>com.dev.ramon.jbpm.JbpmApplication</mainClass>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>
