@@ -79,24 +79,30 @@ REST Endpoint
 The REST API for launching the process:
 POST /process/start
 
+----------------------
 Running the Application
-1. Build everything
-Shellmvn clean installShow more lines
-This builds:
+-----------------------
 
-the KJAR module
-the Spring Boot fat jar
+1. Build everything:
+--------------------
+mvn clean install -DskipTests
 
-2. Run the Spring Boot app
-Shellcd jbpm-applicationmvn spring-boot:run``Show more lines
+2. Run the Spring Boot app:
+--------------------------
+Shellcd jbpm-applicationmvn spring-boot:run`
 Expected console output:
 KieBases: [kbase]
 Sessions: [ksession]
 💡 Hello from jBPM!
 
 
-🚀 Starting the Process via REST
-Use cURL:
-curl -X POST http://localhost:8080/process/start
-Response:
-Process demo.process started!
+🚀 Testing the Process via REST:
+---------------------------------
+-- Use cURL:
+albar01@ES-JQWGG6THP0 jbpm-application % curl -X POST http://localhost:8080/process/start \
+  -H "Content-Type: application/json" \
+  -d '{"name":"John", "age":25}'
+-- Response in the Server:
+2026-03-26 21:10:31.815  INFO 86410 --- [nio-8080-exec-1] c.d.r.jbpm.controller.ProcessController  : >>> Received request: {name=John, age=25}
+>>> BPMN received name = John
+>>> BPMN received age = 25

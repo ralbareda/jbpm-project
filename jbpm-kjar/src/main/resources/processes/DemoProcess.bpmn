@@ -10,11 +10,14 @@
 
     <bpmn2:process id="demo.process" name="Demo Process" isExecutable="true">
 
+        <!-- Process variables -->
         <bpmn2:property id="name" />
         <bpmn2:property id="age" />
 
+        <!-- Start -->
         <bpmn2:startEvent id="start"/>
 
+        <!-- First script -->
         <bpmn2:scriptTask id="script1" name="Print Params" scriptFormat="java">
             <bpmn2:script>
                 System.out.println(">>> BPMN received name = " + kcontext.getVariable("name"));
@@ -22,10 +25,52 @@
             </bpmn2:script>
         </bpmn2:scriptTask>
 
+        <!-- Decision -->
+        <bpmn2:exclusiveGateway id="gateway1" name="Check Age" gatewayDirection="Diverging"/>
+
+        <!-- Underage path -->
+        <bpmn2:scriptTask id="underageTask" name="Underage Handling" scriptFormat="java">
+            <bpmn2:script>
+                System.out.println(">>> Processing underage user.");
+            </bpmn2:script>
+        </bpmn2:scriptTask>
+
+        <!-- Adult path -->
+        <bpmn2:scriptTask id="adultTask" name="Adult Handling" scriptFormat="java">
+            <bpmn2:script>
+                System.out.println(">>> Processing adult user.");
+            </bpmn2:script>
+        </bpmn2:scriptTask>
+
+        <!-- Merge back to one path -->
+        <bpmn2:exclusiveGateway id="gateway2" name="Merge" gatewayDirection="Converging"/>
+
+        <!-- End -->
         <bpmn2:endEvent id="end"/>
 
+        <!-- Flows -->
         <bpmn2:sequenceFlow id="flow1" sourceRef="start" targetRef="script1"/>
-        <bpmn2:sequenceFlow id="flow2" sourceRef="script1" targetRef="end"/>
+
+        <bpmn2:sequenceFlow id="flow2" sourceRef="script1" targetRef="gateway1"/>
+
+        <!-- Condition: age < 18 -->
+        <bpmn2:sequenceFlow id="flow_underage" sourceRef="gateway1" targetRef="underageTask">
+            <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java">
+                return ((Integer)kcontext.getVariable("age")) &lt; 18;
+            </bpmn2:conditionExpression>
+        </bpmn2:sequenceFlow>
+
+        <!-- Condition: age >= 18 -->
+        <bpmn2:sequenceFlow id="flow_adult" sourceRef="gateway1" targetRef="adultTask">
+            <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java">
+                return ((Integer)kcontext.getVariable("age")) >= 18;
+            </bpmn2:conditionExpression>
+        </bpmn2:sequenceFlow>
+
+        <bpmn2:sequenceFlow id="flow_merge1" sourceRef="underageTask" targetRef="gateway2"/>
+        <bpmn2:sequenceFlow id="flow_merge2" sourceRef="adultTask" targetRef="gateway2"/>
+
+        <bpmn2:sequenceFlow id="flow_end" sourceRef="gateway2" targetRef="end"/>
 
     </bpmn2:process>
 
