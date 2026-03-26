@@ -5,6 +5,10 @@
     xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
     xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:drools="http://www.jboss.org/drools"
+    xsi:schemaLocation="
+      http://www.omg.org/spec/BPMN/20100524/MODEL
+      http://www.omg.org/spec/BPMN/20100524/MODEL/BPMN20.xsd"
     id="Definition"
     targetNamespace="http://www.example.org/demo">
 
@@ -13,6 +17,7 @@
     <!--  VARIABLES  -->
     <bpmn2:property id="name"/>
     <bpmn2:property id="age"/>
+    <bpmn2:property id="resultMessage" />
 
     <!-- START -->
     <bpmn2:startEvent id="start" name="Start"/>
@@ -53,6 +58,9 @@
 
     <bpmn2:sequenceFlow id="flow2" sourceRef="script1" targetRef="gateway1"/>
 
+    <bpmn2:sequenceFlow id="flow_merge1" sourceRef="underageTask" targetRef="gateway2"/>
+    <bpmn2:sequenceFlow id="flow_merge2" sourceRef="adultTask" targetRef="gateway2"/>
+
     <!-- If age < 18 -->
     <bpmn2:sequenceFlow id="flow_underage" sourceRef="gateway1" targetRef="underageTask">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java">
@@ -67,10 +75,57 @@
       </bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
 
-    <bpmn2:sequenceFlow id="flow_merge1" sourceRef="underageTask" targetRef="gateway2"/>
-    <bpmn2:sequenceFlow id="flow_merge2" sourceRef="adultTask" targetRef="gateway2"/>
+<!--Add flow FROM gateway2 to your call activity:-->
+    <bpmn2:sequenceFlow id="flow_from_merge_to_call"
+        sourceRef="gateway2"
+        targetRef="callSimpleRuleProcess"/>
 
-    <bpmn2:sequenceFlow id="flow_end" sourceRef="gateway2" targetRef="end"/>
+<!-- Add flow FROM call activity to the end event: -->
+   <bpmn2:sequenceFlow id="flow_from_call_to_end"
+       sourceRef="callSimpleRuleProcess"
+       targetRef="end"/>
+
+<!-- Add subprocess . -->
+    <bpmn2:callActivity
+          id="callSimpleRuleProcess"
+          name="Call Simple Rule Subprocess"
+          calledElement="simple.rule.process"
+          drools:independent="false"
+          drools:waitForCompletion="true">
+
+          <bpmn2:extensionElements>
+              <drools:metaData name="elementname">
+                  <drools:metaValue><![CDATA[Call Simple Rule Subprocess]]></drools:metaValue>
+              </drools:metaData>
+          </bpmn2:extensionElements>
+
+          <!-- Declare input/output variables -->
+          <bpmn2:ioSpecification>
+              <bpmn2:dataInput id="in_age" name="age" drools:dtype="Integer"/>
+              <bpmn2:dataOutput id="out_message" name="resultMessage" drools:dtype="String"/>
+
+              <bpmn2:inputSet>
+                  <bpmn2:dataInputRefs>in_age</bpmn2:dataInputRefs>
+              </bpmn2:inputSet>
+
+              <bpmn2:outputSet>
+                  <bpmn2:dataOutputRefs>out_message</bpmn2:dataOutputRefs>
+              </bpmn2:outputSet>
+          </bpmn2:ioSpecification>
+
+          <!-- Map parent → child -->
+          <bpmn2:dataInputAssociation>
+              <bpmn2:sourceRef>age</bpmn2:sourceRef>
+              <bpmn2:targetRef>in_age</bpmn2:targetRef>
+          </bpmn2:dataInputAssociation>
+
+          <!-- Map child → parent -->
+          <bpmn2:dataOutputAssociation>
+              <bpmn2:sourceRef>out_message</bpmn2:sourceRef>
+              <bpmn2:targetRef>resultMessage</bpmn2:targetRef>
+          </bpmn2:dataOutputAssociation>
+
+      </bpmn2:callActivity>
 
   </bpmn2:process>
 

@@ -1,4 +1,11 @@
 <org.drools.core.rule.KieModuleMetaInfo>
   <typeMetaInfos/>
-  <rulesByPackage/>
+  <rulesByPackage>
+    <entry>
+      <string>defaultpkg</string>
+      <set>
+        <string>SimpleAgeCheck</string>
+      </set>
+    </entry>
+  </rulesByPackage>
 </org.drools.core.rule.KieModuleMetaInfo>
