@@ -7,12 +7,14 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:drools="http://www.jboss.org/drools"
     xsi:schemaLocation="
-      http://www.omg.org/spec/BPMN/20100524/MODEL
-      http://www.omg.org/spec/BPMN/20100524/MODEL/BPMN20.xsd"
+        http://www.omg.org/spec/BPMN/20100524/MODEL
+        http://www.omg.org/spec/BPMN/20100524/MODEL/BPMN20.xsd"
     id="Definitions"
     targetNamespace="http://www.example.org/demo">
 
   <bpmn2:process id="simple.rule.process" name="Simple Rule Subprocess" isExecutable="true">
+
+    <bpmn2:property id="age"/>
 
     <bpmn2:startEvent id="start"/>
 
@@ -30,5 +32,33 @@
     <bpmn2:sequenceFlow id="flow2" sourceRef="fireRules" targetRef="end"/>
 
   </bpmn2:process>
+
+  <bpmndi:BPMNDiagram id="Diagram-simple">
+    <bpmndi:BPMNPlane id="Plane-simple" bpmnElement="simple.rule.process">
+
+      <bpmndi:BPMNShape id="shape_start" bpmnElement="start">
+        <dc:Bounds x="150" y="120" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="shape_fireRules" bpmnElement="fireRules">
+        <dc:Bounds x="300" y="110" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="shape_end" bpmnElement="end">
+        <dc:Bounds x="500" y="120" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="edge_flow1" bpmnElement="flow1">
+        <di:waypoint x="186" y="138"/>
+        <di:waypoint x="300" y="140"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="edge_flow2" bpmnElement="flow2">
+        <di:waypoint x="450" y="140"/>
+        <di:waypoint x="500" y="138"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
 
 </bpmn2:definitions>

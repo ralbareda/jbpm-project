@@ -7,22 +7,19 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:drools="http://www.jboss.org/drools"
     xsi:schemaLocation="
-      http://www.omg.org/spec/BPMN/20100524/MODEL
-      http://www.omg.org/spec/BPMN/20100524/MODEL/BPMN20.xsd"
-    id="Definition"
+        http://www.omg.org/spec/BPMN/20100524/MODEL
+        http://www.omg.org/spec/BPMN/20100524/MODEL/BPMN20.xsd"
+    id="Definitions"
     targetNamespace="http://www.example.org/demo">
 
   <bpmn2:process id="demo.process" name="Demo Process" isExecutable="true">
 
-    <!--  VARIABLES  -->
     <bpmn2:property id="name"/>
     <bpmn2:property id="age"/>
-    <bpmn2:property id="resultMessage" />
+    <bpmn2:property id="resultMessage"/>
 
-    <!-- START -->
-    <bpmn2:startEvent id="start" name="Start"/>
+    <bpmn2:startEvent id="start"/>
 
-    <!-- PRINT PARAMS -->
     <bpmn2:scriptTask id="script1" name="Print Params" scriptFormat="java">
       <bpmn2:script>
         System.out.println(">>> BPMN received name = " + kcontext.getVariable("name"));
@@ -30,179 +27,152 @@
       </bpmn2:script>
     </bpmn2:scriptTask>
 
-    <!-- DECISION GATEWAY -->
-    <bpmn2:exclusiveGateway id="gateway1" name="Check Age" gatewayDirection="Diverging"/>
+    <bpmn2:exclusiveGateway id="gateway1" gatewayDirection="Diverging"/>
 
-    <!-- UNDERAGE -->
     <bpmn2:scriptTask id="underageTask" name="Underage Handling" scriptFormat="java">
       <bpmn2:script>
-        System.out.println(">>> Processing underage user.");
+        System.out.println(">>> Underage branch executed");
       </bpmn2:script>
     </bpmn2:scriptTask>
 
-    <!-- ADULT -->
     <bpmn2:scriptTask id="adultTask" name="Adult Handling" scriptFormat="java">
       <bpmn2:script>
-        System.out.println(">>> Processing adult user.");
+        System.out.println(">>> Adult branch executed");
       </bpmn2:script>
     </bpmn2:scriptTask>
 
-    <!-- MERGE -->
-    <bpmn2:exclusiveGateway id="gateway2" name="Merge" gatewayDirection="Converging"/>
+    <bpmn2:exclusiveGateway id="gateway2" gatewayDirection="Converging"/>
 
-    <!-- END -->
-    <bpmn2:endEvent id="end" name="End"/>
+    <bpmn2:callActivity
+        id="callSimpleRuleProcess"
+        name="Call Simple Rule Subprocess"
+        calledElement="simple.rule.process"
+        drools:independent="false"
+        drools:waitForCompletion="true">
 
-    <!-- FLOWS -->
+      <bpmn2:ioSpecification>
+        <bpmn2:dataInput id="in_age" name="age"/>
+        <bpmn2:dataOutput id="out_message" name="resultMessage"/>
+
+        <bpmn2:inputSet>
+          <bpmn2:dataInputRefs>in_age</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+
+        <bpmn2:outputSet>
+          <bpmn2:dataOutputRefs>out_message</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+
+      <bpmn2:dataInputAssociation>
+        <bpmn2:sourceRef>age</bpmn2:sourceRef>
+        <bpmn2:targetRef>in_age</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+
+      <bpmn2:dataOutputAssociation>
+        <bpmn2:sourceRef>out_message</bpmn2:sourceRef>
+        <bpmn2:targetRef>resultMessage</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+
+    </bpmn2:callActivity>
+
+    <bpmn2:endEvent id="end"/>
+
     <bpmn2:sequenceFlow id="flow1" sourceRef="start" targetRef="script1"/>
-
     <bpmn2:sequenceFlow id="flow2" sourceRef="script1" targetRef="gateway1"/>
 
-    <bpmn2:sequenceFlow id="flow_merge1" sourceRef="underageTask" targetRef="gateway2"/>
-    <bpmn2:sequenceFlow id="flow_merge2" sourceRef="adultTask" targetRef="gateway2"/>
-
-    <!-- If age < 18 -->
     <bpmn2:sequenceFlow id="flow_underage" sourceRef="gateway1" targetRef="underageTask">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java">
         return ((Integer)kcontext.getVariable("age")) &lt; 18;
       </bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
 
-    <!-- If age >= 18 -->
     <bpmn2:sequenceFlow id="flow_adult" sourceRef="gateway1" targetRef="adultTask">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java">
         return ((Integer)kcontext.getVariable("age")) >= 18;
       </bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
 
-<!--Add flow FROM gateway2 to your call activity:-->
-    <bpmn2:sequenceFlow id="flow_from_merge_to_call"
-        sourceRef="gateway2"
-        targetRef="callSimpleRuleProcess"/>
+    <bpmn2:sequenceFlow id="flow_merge1" sourceRef="underageTask" targetRef="gateway2"/>
+    <bpmn2:sequenceFlow id="flow_merge2" sourceRef="adultTask" targetRef="gateway2"/>
 
-<!-- Add flow FROM call activity to the end event: -->
-   <bpmn2:sequenceFlow id="flow_from_call_to_end"
-       sourceRef="callSimpleRuleProcess"
-       targetRef="end"/>
-
-<!-- Add subprocess . -->
-    <bpmn2:callActivity
-          id="callSimpleRuleProcess"
-          name="Call Simple Rule Subprocess"
-          calledElement="simple.rule.process"
-          drools:independent="false"
-          drools:waitForCompletion="true">
-
-          <bpmn2:extensionElements>
-              <drools:metaData name="elementname">
-                  <drools:metaValue><![CDATA[Call Simple Rule Subprocess]]></drools:metaValue>
-              </drools:metaData>
-          </bpmn2:extensionElements>
-
-          <!-- Declare input/output variables -->
-          <bpmn2:ioSpecification>
-              <bpmn2:dataInput id="in_age" name="age" drools:dtype="Integer"/>
-              <bpmn2:dataOutput id="out_message" name="resultMessage" drools:dtype="String"/>
-
-              <bpmn2:inputSet>
-                  <bpmn2:dataInputRefs>in_age</bpmn2:dataInputRefs>
-              </bpmn2:inputSet>
-
-              <bpmn2:outputSet>
-                  <bpmn2:dataOutputRefs>out_message</bpmn2:dataOutputRefs>
-              </bpmn2:outputSet>
-          </bpmn2:ioSpecification>
-
-          <!-- Map parent → child -->
-          <bpmn2:dataInputAssociation>
-              <bpmn2:sourceRef>age</bpmn2:sourceRef>
-              <bpmn2:targetRef>in_age</bpmn2:targetRef>
-          </bpmn2:dataInputAssociation>
-
-          <!-- Map child → parent -->
-          <bpmn2:dataOutputAssociation>
-              <bpmn2:sourceRef>out_message</bpmn2:sourceRef>
-              <bpmn2:targetRef>resultMessage</bpmn2:targetRef>
-          </bpmn2:dataOutputAssociation>
-
-      </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="flow_to_call" sourceRef="gateway2" targetRef="callSimpleRuleProcess"/>
+    <bpmn2:sequenceFlow id="flow_to_end" sourceRef="callSimpleRuleProcess" targetRef="end"/>
 
   </bpmn2:process>
 
-
-  <!--  BPMN-DI (Diagram Interchange Metadata) -->
   <bpmndi:BPMNDiagram id="Diagram-demo">
     <bpmndi:BPMNPlane id="Plane-demo" bpmnElement="demo.process">
 
-      <!-- START -->
       <bpmndi:BPMNShape id="shape_start" bpmnElement="start">
-        <dc:Bounds x="100" y="100" width="36" height="36"/>
+        <dc:Bounds x="80" y="120" width="36" height="36"/>
       </bpmndi:BPMNShape>
 
-      <!-- SCRIPT1 -->
       <bpmndi:BPMNShape id="shape_script1" bpmnElement="script1">
-        <dc:Bounds x="200" y="90" width="140" height="60"/>
+        <dc:Bounds x="180" y="110" width="140" height="60"/>
       </bpmndi:BPMNShape>
 
-      <!-- GATEWAY1 -->
       <bpmndi:BPMNShape id="shape_gateway1" bpmnElement="gateway1">
-        <dc:Bounds x="380" y="100" width="50" height="50"/>
+        <dc:Bounds x="350" y="120" width="50" height="50"/>
       </bpmndi:BPMNShape>
 
-      <!-- UNDERAGE TASK -->
       <bpmndi:BPMNShape id="shape_underage" bpmnElement="underageTask">
-        <dc:Bounds x="500" y="40" width="170" height="60"/>
+        <dc:Bounds x="450" y="40" width="170" height="60"/>
       </bpmndi:BPMNShape>
 
-      <!-- ADULT TASK -->
       <bpmndi:BPMNShape id="shape_adult" bpmnElement="adultTask">
-        <dc:Bounds x="500" y="160" width="170" height="60"/>
+        <dc:Bounds x="450" y="200" width="170" height="60"/>
       </bpmndi:BPMNShape>
 
-      <!-- MERGE GATEWAY -->
       <bpmndi:BPMNShape id="shape_gateway2" bpmnElement="gateway2">
-        <dc:Bounds x="700" y="100" width="50" height="50"/>
+        <dc:Bounds x="660" y="120" width="50" height="50"/>
       </bpmndi:BPMNShape>
 
-      <!-- END -->
+      <bpmndi:BPMNShape id="shape_callSimpleRuleProcess" bpmnElement="callSimpleRuleProcess">
+        <dc:Bounds x="780" y="110" width="180" height="80"/>
+      </bpmndi:BPMNShape>
+
       <bpmndi:BPMNShape id="shape_end" bpmnElement="end">
-        <dc:Bounds x="800" y="110" width="36" height="36"/>
+        <dc:Bounds x="1000" y="130" width="36" height="36"/>
       </bpmndi:BPMNShape>
 
-      <!-- EDGES -->
       <bpmndi:BPMNEdge id="edge_flow1" bpmnElement="flow1">
-        <di:waypoint x="136" y="118"/>
-        <di:waypoint x="200" y="118"/>
+        <di:waypoint x="116" y="138"/>
+        <di:waypoint x="180" y="140"/>
       </bpmndi:BPMNEdge>
 
       <bpmndi:BPMNEdge id="edge_flow2" bpmnElement="flow2">
-        <di:waypoint x="340" y="118"/>
-        <di:waypoint x="380" y="125"/>
+        <di:waypoint x="320" y="140"/>
+        <di:waypoint x="350" y="145"/>
       </bpmndi:BPMNEdge>
 
       <bpmndi:BPMNEdge id="edge_underage" bpmnElement="flow_underage">
-        <di:waypoint x="430" y="125"/>
-        <di:waypoint x="500" y="70"/>
+        <di:waypoint x="400" y="145"/>
+        <di:waypoint x="450" y="70"/>
       </bpmndi:BPMNEdge>
 
       <bpmndi:BPMNEdge id="edge_adult" bpmnElement="flow_adult">
-        <di:waypoint x="430" y="125"/>
-        <di:waypoint x="500" y="190"/>
+        <di:waypoint x="400" y="145"/>
+        <di:waypoint x="450" y="230"/>
       </bpmndi:BPMNEdge>
 
       <bpmndi:BPMNEdge id="edge_merge1" bpmnElement="flow_merge1">
-        <di:waypoint x="670" y="70"/>
-        <di:waypoint x="700" y="125"/>
+        <di:waypoint x="620" y="70"/>
+        <di:waypoint x="660" y="145"/>
       </bpmndi:BPMNEdge>
 
       <bpmndi:BPMNEdge id="edge_merge2" bpmnElement="flow_merge2">
-        <di:waypoint x="670" y="190"/>
-        <di:waypoint x="700" y="125"/>
+        <di:waypoint x="620" y="230"/>
+        <di:waypoint x="660" y="145"/>
       </bpmndi:BPMNEdge>
 
-      <bpmndi:BPMNEdge id="edge_end" bpmnElement="flow_end">
-        <di:waypoint x="750" y="125"/>
-        <di:waypoint x="800" y="128"/>
+      <bpmndi:BPMNEdge id="edge_to_call" bpmnElement="flow_to_call">
+        <di:waypoint x="710" y="145"/>
+        <di:waypoint x="780" y="150"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="edge_to_end" bpmnElement="flow_to_end">
+        <di:waypoint x="960" y="150"/>
+        <di:waypoint x="1000" y="148"/>
       </bpmndi:BPMNEdge>
 
     </bpmndi:BPMNPlane>
