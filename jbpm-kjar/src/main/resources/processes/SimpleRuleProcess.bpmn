@@ -4,8 +4,9 @@
     xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
     xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
     xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:drools="http://www.jboss.org/drools"
+    xmlns:kie="http://www.drools.org/kie#"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="
         http://www.omg.org/spec/BPMN/20100524/MODEL
         http://www.omg.org/spec/BPMN/20100524/MODEL/BPMN20.xsd"
@@ -15,21 +16,62 @@
   <bpmn2:process id="simple.rule.process" name="Simple Rule Subprocess" isExecutable="true">
 
     <bpmn2:property id="age"/>
+    <bpmn2:property id="isAdult"/>
 
     <bpmn2:startEvent id="start"/>
 
-    <bpmn2:scriptTask id="fireRules" name="Fire Rules" scriptFormat="java">
-      <bpmn2:script>
-        org.kie.api.runtime.KieRuntime kr = kcontext.getKieRuntime();
-        kr.insert(kcontext.getVariable("age"));
-        kr.fireAllRules();
-      </bpmn2:script>
-    </bpmn2:scriptTask>
+<bpmn2:task
+    id="evaluateAgeTask"
+    name="Evaluate Age Decision"
+    drools:taskName="DMN">
+
+  <bpmn2:extensionElements>
+
+    <kie:dmn-model>
+      <kie:value><![CDATA[rules/AgeDecision.dmn]]></kie:value>
+    </kie:dmn-model>
+
+    <kie:dmn-model-namespace>
+      <kie:value><![CDATA[https://example.org/dmn]]></kie:value>
+    </kie:dmn-model-namespace>
+
+    <kie:dmn-model-name>
+      <kie:value><![CDATA[AgeDecision]]></kie:value>
+    </kie:dmn-model-name>
+
+    <kie:dmn-decision-name>
+      <kie:value><![CDATA[isAdult]]></kie:value>
+    </kie:dmn-decision-name>
+
+  </bpmn2:extensionElements>
+
+  <bpmn2:ioSpecification>
+    <bpmn2:dataInput id="in_age" name="age"/>
+    <bpmn2:dataOutput id="out_isAdult" name="isAdult"/>
+    <bpmn2:inputSet>
+      <bpmn2:dataInputRefs>in_age</bpmn2:dataInputRefs>
+    </bpmn2:inputSet>
+    <bpmn2:outputSet>
+      <bpmn2:dataOutputRefs>out_isAdult</bpmn2:dataOutputRefs>
+    </bpmn2:outputSet>
+  </bpmn2:ioSpecification>
+
+  <bpmn2:dataInputAssociation>
+    <bpmn2:sourceRef>age</bpmn2:sourceRef>
+    <bpmn2:targetRef>in_age</bpmn2:targetRef>
+  </bpmn2:dataInputAssociation>
+
+  <bpmn2:dataOutputAssociation>
+    <bpmn2:sourceRef>out_isAdult</bpmn2:sourceRef>
+    <bpmn2:targetRef>isAdult</bpmn2:targetRef>
+  </bpmn2:dataOutputAssociation>
+
+</bpmn2:task>
 
     <bpmn2:endEvent id="end"/>
 
-    <bpmn2:sequenceFlow id="flow1" sourceRef="start" targetRef="fireRules"/>
-    <bpmn2:sequenceFlow id="flow2" sourceRef="fireRules" targetRef="end"/>
+    <bpmn2:sequenceFlow id="flow1" sourceRef="start" targetRef="evaluateAgeTask"/>
+    <bpmn2:sequenceFlow id="flow2" sourceRef="evaluateAgeTask" targetRef="end"/>
 
   </bpmn2:process>
 
@@ -40,22 +82,22 @@
         <dc:Bounds x="150" y="120" width="36" height="36"/>
       </bpmndi:BPMNShape>
 
-      <bpmndi:BPMNShape id="shape_fireRules" bpmnElement="fireRules">
-        <dc:Bounds x="300" y="110" width="150" height="60"/>
+      <bpmndi:BPMNShape id="shape_dmn" bpmnElement="evaluateAgeTask">
+        <dc:Bounds x="300" y="110" width="160" height="80"/>
       </bpmndi:BPMNShape>
 
       <bpmndi:BPMNShape id="shape_end" bpmnElement="end">
-        <dc:Bounds x="500" y="120" width="36" height="36"/>
+        <dc:Bounds x="520" y="120" width="36" height="36"/>
       </bpmndi:BPMNShape>
 
       <bpmndi:BPMNEdge id="edge_flow1" bpmnElement="flow1">
         <di:waypoint x="186" y="138"/>
-        <di:waypoint x="300" y="140"/>
+        <di:waypoint x="300" y="150"/>
       </bpmndi:BPMNEdge>
 
       <bpmndi:BPMNEdge id="edge_flow2" bpmnElement="flow2">
-        <di:waypoint x="450" y="140"/>
-        <di:waypoint x="500" y="138"/>
+        <di:waypoint x="460" y="150"/>
+        <di:waypoint x="520" y="138"/>
       </bpmndi:BPMNEdge>
 
     </bpmndi:BPMNPlane>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmn:definitions
+    xmlns:dmn="http://www.omg.org/spec/DMN/20180521/MODEL/"
+    xmlns:dmndi="http://www.omg.org/spec/DMN/20180521/DMNDI/"
+    xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+    xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+    id="definitions"
+    name="AgeDecision"
+    namespace="https://example.org/dmn">
+
+  <!-- INPUT -->
+  <dmn:inputData id="ID_input_age" name="age">
+    <dmn:variable id="Var_input_age" name="age" typeRef="number"/>
+  </dmn:inputData>
+
+  <!-- DECISION -->
+  <dmn:decision id="ID_decision_isAdult" name="isAdult">
+    <dmn:variable id="Var_isAdult" name="isAdult" typeRef="boolean"/>
+
+    <!-- THIS PART WAS THE PROBLEM — NOW FIXED -->
+    <dmn:informationRequirement>
+      <dmn:requiredInput href="#ID_input_age"/>
+    </dmn:informationRequirement>
+
+    <dmn:decisionTable id="ID_decision_table" hitPolicy="FIRST">
+
+      <dmn:input id="ID_input_clause">
+        <dmn:inputExpression id="ID_input_expr" typeRef="number">
+          <dmn:text>age</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+
+      <dmn:output id="ID_output_clause" name="isAdult" typeRef="boolean"/>
+
+      <dmn:rule id="rule_underage">
+        <dmn:inputEntry><dmn:text>&lt; 18</dmn:text></dmn:inputEntry>
+        <dmn:outputEntry><dmn:text>false</dmn:text></dmn:outputEntry>
+      </dmn:rule>
+
+      <dmn:rule id="rule_adult">
+        <dmn:inputEntry><dmn:text>&gt;= 18</dmn:text></dmn:inputEntry>
+        <dmn:outputEntry><dmn:text>true</dmn:text></dmn:outputEntry>
+      </dmn:rule>
+
+    </dmn:decisionTable>
+  </dmn:decision>
+
+  <!-- MINIMAL DI (REQUIRED BY KIE DESIGNER) -->
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="diagram1" name="DRG"/>
+  </dmndi:DMNDI>
+
+</dmn:definitions>

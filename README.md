@@ -99,10 +99,23 @@ Sessions: [ksession]
 🚀 Testing the Process via REST:
 ---------------------------------
 -- Use cURL:
-albar01@ES-JQWGG6THP0 jbpm-application % curl -X POST http://localhost:8080/process/start \
+albar01@ES-JQWGG6THP0 jbpm-application % 
+curl -X POST http://localhost:8080/process/start \
   -H "Content-Type: application/json" \
   -d '{"name":"John", "age":25}'
 -- Response in the Server:
 2026-03-26 21:10:31.815  INFO 86410 --- [nio-8080-exec-1] c.d.r.jbpm.controller.ProcessController  : >>> Received request: {name=John, age=25}
 >>> BPMN received name = John
 >>> BPMN received age = 25
+
+
+4. What Happens at Runtime?
+-----------------------------
+Your BPMN calls the DMN model directly:
+age (from main BPMN)
+   ↓
+DMN Engine evaluates age (BPMN Subprocess)
+   ↓
+isAdult decision (true/false)
+   ↓
+flow continues
