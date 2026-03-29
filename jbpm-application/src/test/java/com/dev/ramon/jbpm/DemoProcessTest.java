@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.junit.Test;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
@@ -20,23 +21,26 @@ public class DemoProcessTest {
         KieContainer kContainer = ks.getKieClasspathContainer();
         KieSession kSession = kContainer.newKieSession("ksession");
 
+        kSession.getWorkItemManager().registerWorkItemHandler(
+                "DMN",
+                new org.jbpm.process.instance.impl.demo.SystemOutWorkItemHandler()
+        );
+
         Map<String, Object> params = new HashMap<>();
         params.put("name", "John Doe");
-        params.put("age", 20);  // Try 17 or 20
-
-        System.out.println(">>> STARTING PROCESS WITH INPUT age=" + params.get("age"));
+        params.put("age", 20);
 
         ProcessInstance pi = kSession.startProcess("demo.process", params);
 
         assertEquals(ProcessInstance.STATE_COMPLETED, pi.getState());
 
-        // Correct way to get variables
         WorkflowProcessInstance wpi = (WorkflowProcessInstance) pi;
+
         Object isAdult = wpi.getVariable("isAdult");
 
-        System.out.println(">>> FINAL RESULT FROM PROCESS: isAdult = " + isAdult);
+        System.out.println(">>> FINAL RESULT: isAdult = " + isAdult);
 
-        assertNotNull("DMN did not return isAdult!", isAdult);
-        assertTrue("isAdult must be a boolean", isAdult instanceof Boolean);
+        assertNotNull(isAdult);
+        assertTrue(isAdult instanceof Boolean);
     }
 }

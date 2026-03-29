@@ -17,6 +17,7 @@
     <bpmn2:property id="name"/>
     <bpmn2:property id="age"/>
     <bpmn2:property id="resultMessage"/>
+    <bpmn2:property id="isAdult"/>
 
     <bpmn2:startEvent id="start"/>
 
@@ -51,16 +52,18 @@
         drools:waitForCompletion="true">
 
       <bpmn2:ioSpecification>
-        <bpmn2:dataInput id="in_age" name="age"/>
-        <bpmn2:dataOutput id="out_message" name="resultMessage"/>
+          <bpmn2:dataInput id="in_age" name="age"/>
+          <bpmn2:dataOutput id="out_isAdult" name="isAdult"/>
+          <bpmn2:dataOutput id="out_message" name="resultMessage"/>
 
-        <bpmn2:inputSet>
-          <bpmn2:dataInputRefs>in_age</bpmn2:dataInputRefs>
-        </bpmn2:inputSet>
+          <bpmn2:inputSet>
+              <bpmn2:dataInputRefs>in_age</bpmn2:dataInputRefs>
+          </bpmn2:inputSet>
 
-        <bpmn2:outputSet>
-          <bpmn2:dataOutputRefs>out_message</bpmn2:dataOutputRefs>
-        </bpmn2:outputSet>
+          <bpmn2:outputSet>
+              <bpmn2:dataOutputRefs>out_isAdult</bpmn2:dataOutputRefs>
+              <bpmn2:dataOutputRefs>out_message</bpmn2:dataOutputRefs>
+          </bpmn2:outputSet>
       </bpmn2:ioSpecification>
 
       <bpmn2:dataInputAssociation>
@@ -69,11 +72,25 @@
       </bpmn2:dataInputAssociation>
 
       <bpmn2:dataOutputAssociation>
+          <bpmn2:sourceRef>out_isAdult</bpmn2:sourceRef>
+          <bpmn2:targetRef>isAdult</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+
+      <bpmn2:dataOutputAssociation>
         <bpmn2:sourceRef>out_message</bpmn2:sourceRef>
         <bpmn2:targetRef>resultMessage</bpmn2:targetRef>
       </bpmn2:dataOutputAssociation>
 
     </bpmn2:callActivity>
+
+    <bpmn2:scriptTask id="printIsAdult" name="Print isAdult" scriptFormat="java">
+      <bpmn2:script>
+        System.out.println(">>> isAdult = " + kcontext.getVariable("isAdult"));
+      </bpmn2:script>
+    </bpmn2:scriptTask>
+
+    <bpmn2:sequenceFlow id="flow_print" sourceRef="callSimpleRuleProcess" targetRef="printIsAdult"/>
+    <bpmn2:sequenceFlow id="flow_end" sourceRef="printIsAdult" targetRef="end"/>
 
     <bpmn2:endEvent id="end"/>
 
@@ -96,7 +113,6 @@
     <bpmn2:sequenceFlow id="flow_merge2" sourceRef="adultTask" targetRef="gateway2"/>
 
     <bpmn2:sequenceFlow id="flow_to_call" sourceRef="gateway2" targetRef="callSimpleRuleProcess"/>
-    <bpmn2:sequenceFlow id="flow_to_end" sourceRef="callSimpleRuleProcess" targetRef="end"/>
 
   </bpmn2:process>
 
