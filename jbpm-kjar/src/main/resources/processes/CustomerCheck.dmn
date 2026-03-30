@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmn:definitions
+        xmlns:dmn="http://www.omg.org/spec/DMN/20180521/MODEL/"
+        xmlns="https://kie.org/dmn/_9B300DDE-C5A4-4F9E-8B71-8C8C24F5FA96"
+        xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+        xmlns:kie="https://kie.org/dmn/extensions/1.0"
+        xmlns:feel="http://www.omg.org/spec/DMN/20180521/FEEL/"
+        xmlns:dmndi="http://www.omg.org/spec/DMN/20180521/DMNDI/"
+        xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+        id="_B7D9D63E-8D38-425F-AFB3-8D9141A07DB9"
+        name="DMN_6F817B09-10B1-4298-918D-F64B9A6529DB"
+        namespace="https://kie.org/dmn/_9B300DDE-C5A4-4F9E-8B71-8C8C24F5FA96"
+        expressionLanguage="http://www.omg.org/spec/DMN/20180521/FEEL/"
+        typeLanguage="http://www.omg.org/spec/DMN/20180521/FEEL/">
+
+    <dmn:decision name="isAdult" id="_59DC2CD4-6ABE-4BB7-930E-B44562959122">
+        <dmn:variable name="isAdult" id="_E9CE59C5-6DAE-496B-879C-D9B3D729F2BE" typeRef="boolean"/>
+
+        <dmn:informationRequirement id="_6E8E3CCD-91EE-46DC-A5D4-AF3971485574">
+            <dmn:requiredInput href="#_4012EFC7-49D9-420B-8BA2-FA4A49F70BCE"/>
+        </dmn:informationRequirement>
+
+        <dmn:decisionTable
+                id="_018DF284-4616-4C83-8D61-9C35E1EF1679"
+                hitPolicy="UNIQUE"
+                typeRef="boolean"
+                preferredOrientation="Rule-as-Row"
+                label="isAdult">
+
+            <dmn:input id="_79896260-6D8E-4153-955A-B818831B598F">
+                <dmn:inputExpression id="_381A345C-2833-4DE5-B985-3B0821959211" typeRef="number">
+                    <dmn:text>age</dmn:text>
+                </dmn:inputExpression>
+            </dmn:input>
+
+            <dmn:output id="_A9B026F2-A56E-4707-B60D-16D7D6BF636E"/>
+            <dmn:annotation name="Annotations"/>
+
+            <dmn:rule id="_50199912-6368-48BC-82B3-5CB91C805257">
+                <dmn:inputEntry id="_DD757938-75EC-44CB-9733-49E0CB0A6E0A">
+                    <dmn:text>&gt; 18</dmn:text>
+                </dmn:inputEntry>
+                <dmn:outputEntry id="_7060189D-8B16-451B-B0C8-9EF986B9E9BB">
+                    <dmn:text>true</dmn:text>
+                </dmn:outputEntry>
+                <dmn:annotationEntry>
+                    <dmn:text>// mayor 18</dmn:text>
+                </dmn:annotationEntry>
+            </dmn:rule>
+
+            <dmn:rule id="_8D46E9AA-5289-444D-ABD8-1392F53A1BAE">
+                <dmn:inputEntry id="_AAA5EE32-4544-4AEE-BD54-207D78CEE73C">
+                    <dmn:text>&lt; 18</dmn:text>
+                </dmn:inputEntry>
+                <dmn:outputEntry id="_7577D710-D6B0-47E8-8ED6-D3B5A798212D">
+                    <dmn:text>false</dmn:text>
+                </dmn:outputEntry>
+                <dmn:annotationEntry>
+                    <dmn:text>// menor 18</dmn:text>
+                </dmn:annotationEntry>
+            </dmn:rule>
+        </dmn:decisionTable>
+    </dmn:decision>
+
+    <dmn:inputData name="age" id="_4012EFC7-49D9-420B-8BA2-FA4A49F70BCE">
+        <dmn:variable name="age" id="_9FB23BC8-B155-4105-9FDD-F81281E72AA4" typeRef="number"/>
+    </dmn:inputData>
+
+    <dmndi:DMNDI>
+        <dmndi:DMNDiagram id="_F78455A9-1844-41FA-88B4-AAB8DDEF813D" name="Default DRD">
+            <di:extension>
+                <kie:ComponentsWidthsExtension>
+                    <kie:ComponentWidths dmnElementRef="_018DF284-4616-4C83-8D61-9C35E1EF1679">
+                        <kie:width>60</kie:width>
+                        <kie:width>118</kie:width>
+                        <kie:width>118</kie:width>
+                        <kie:width>240</kie:width>
+                    </kie:ComponentWidths>
+                </kie:ComponentsWidthsExtension>
+            </di:extension>
+
+            <dmndi:DMNShape
+                    id="_6F3762F2-241E-4DBF-8EC9-7EA6E615AFD5"
+                    dmnElementRef="_59DC2CD4-6ABE-4BB7-930E-B44562959122"
+                    isCollapsed="false">
+                <dc:Bounds x="140" y="40" width="160" height="80"/>
+            </dmndi:DMNShape>
+
+            <dmndi:DMNShape
+                    id="_2B3A4674-CF86-4BC4-AA9F-E60BD77235FD"
+                    dmnElementRef="_4012EFC7-49D9-420B-8BA2-FA4A49F70BCE"
+                    isCollapsed="false">
+                <dc:Bounds x="140" y="220" width="160" height="80"/>
+            </dmndi:DMNShape>
+
+
+
+        </dmndi:DMNDiagram>
+    </dmndi:DMNDI>
+
+</dmn:definitions>

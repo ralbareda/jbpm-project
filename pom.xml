@@ -14,6 +14,6 @@
     </modules>
 
     <properties>
-        <jbpm.version>7.74.1.Final</jbpm.version>
+        <jbpm.version>7.64.0.Final</jbpm.version>
     </properties>
 </project>
