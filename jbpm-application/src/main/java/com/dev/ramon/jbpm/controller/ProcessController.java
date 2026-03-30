@@ -25,7 +25,7 @@ public class ProcessController {
 
         log.info(">>> Received request: {}", params);
 
-        kieSession.startProcess("demo.process", params);
+        kieSession.startProcess("CustomerCardProcess", params);
 
         return "Process started with parameters: " + params;
     }

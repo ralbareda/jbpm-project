@@ -1,6 +1,0 @@
-rule "SimpleAgeCheck"
-when
-    $age : Integer( this >= 18 )
-then
-    System.out.println(">>> Rule fired: adult");
-end
