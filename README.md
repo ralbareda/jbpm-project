@@ -14,100 +14,34 @@ This project contains:
 
 ## 🛠 Requirements
 
-| Component        | Version            |
-|------------------|--------------------|
-| Java             | **17**             |
-| Maven            | 3.8+               |
-| Spring Boot      | 2.7.18             |
-| jBPM / Drools    | 7.74.1.Final       |
+| Component     | Version            |
+|---------------|--------------------|
+| Java          | **17**             |
+| Maven         | 3.8+               |
+| Spring Boot   | 2.7.18             |
+| jBPM / Drools | 7.64.0.Final       |
 
-⚠️ **Java 21 is NOT supported by jBPM 7.x**  
-(`java.lang.Compiler` was removed → runtime failure)
+YOu can use the Apache KIE BPMN Editor for VS Code, 
+which provides a user-friendly interface for designing and managing BPMN processes. 
+It allows you to create, edit, and visualize your BPMN workflows directly within the VS Code environment, 
+making it easier to develop and maintain your jBPM processes.
 
-## 🧱 Project Structure
-
-Build Structure Diagram
-jbpm-project
-├── pom.xml                 (parent)
-├── jbpm-kjar/
-│   ├── pom.xml
-│   └── processes/...
-└── jbpm-application/
-├── pom.xml
-└── src/main/java/...
-
-### **1. Parent Project (`jbpm-project/`)**
-Holds:
-- multi‑module aggregator
-- build properties
-- shared configuration
-- `jbpm.version` property
-
-### **2. jbpm-kjar**
-Contains:
-- BPMN2 processes
-- `META-INF/kmodule.xml`
-- packaged as a **KJAR** using `kie-maven-plugin`
-
-### **3. jbpm-application**
-A Spring Boot 2.7.x application that:
-- loads the KJAR using KIE APIs
-- creates a `KieContainer` using ReleaseId
-- exposes REST endpoint
-
-## ⚙️ KieConfig
-
-The Spring Boot app loads the KJAR explicitly using a ReleaseId:
-
-```java
-@Bean
-public KieContainer kieContainer() {
-    KieServices ks = KieServices.Factory.get();
-    ReleaseId releaseId = ks.newReleaseId("com.dev.ramon", "jbpm-kjar", "1.0.0");
-    return ks.newKieContainer(releaseId);
-}
-
-@Bean
-public KieSession kieSession(KieContainer kieContainer) {
-    return kieContainer.newKieSession("ksession");
-}
-
-BPMN Process Definition
-File: jbpm-kjar/src/main/resources/processes/DemoProcess.bpmn2
-
-REST Endpoint
-The REST API for launching the process:
-POST /process/start
-
-----------------------
-Running the Application
------------------------
-
+-------------------
 1. Build everything:
 --------------------
 mvn clean install -DskipTests
 
-2. Run the Spring Boot app:
---------------------------
-Shellcd jbpm-applicationmvn spring-boot:run`
-Expected console output:
-KieBases: [kbase]
-Sessions: [ksession]
-💡 Hello from jBPM!
-
 
 🚀 Testing the Process via REST:
 ---------------------------------
--- Use cURL:
-albar01@ES-JQWGG6THP0 jbpm-application % 
+-- REST Request:
 curl -X POST http://localhost:8080/process/start \
   -H "Content-Type: application/json" \
   -d '{"name":"John", "age":25}'
--- Response in the Server:
-2026-03-26 21:10:31.815  INFO 86410 --- [nio-8080-exec-1] c.d.r.jbpm.controller.ProcessController  : >>> Received request: {name=John, age=25}
->>> BPMN received name = John
->>> BPMN received age = 25
 
+-- REST Response:
+isAdult: true >>> VENDER VISA ORO
+otherwise >>> REGALAR CARNET_JOVE
 
 4. What Happens at Runtime?
 -----------------------------
